@@ -17,34 +17,66 @@ void prompt();
 bool getUser();
 bool getPass();
 
-bool checkUser(const std::string &userFile){
-    boost::filesystem::path p("userinfo/"+userFile+".txt");
+
+bool checkUser(const std::string &user){
+    boost::filesystem::path p("userinfo/"+user);
     if (boost::filesystem::exists(p)){
-        return true;
+        std::cout << "User exists\n Please enter a different username.";
+		return true;
     }
     else{
+		std::cout << "Username available.";
         return false;
     }
 }
 
-void reg(){
-	std::string newUser;
+void addPass(const std::string &user){
 	std::string newPass1;
 	std::string newPass2;
+	
+	while (true){
+
+		std::cout << "Enter your password: ";
+		std::cin >> newPass1;
+
+		std::cout << "Re-enter your password: ";
+		std::cin >> newPass2;
+
+		if (newPass1 == newPass2){
+			std::ofstream userFile ("userinfo/"+user);
+
+			if (userFile.is_open()){
+				userFile << user+":"+newPass2;
+				userFile.close();
+			}
+			else std::cout << "Unable to create user.";
+		}
+		else{
+			
+		}
+	}
+
+}
+
+void reg(){
+	std::string newUser;
 	boost::filesystem::path infoDir("userinfo");
 
-	std::cout << "Please enter the username you would like to register: ";
-	std::cin >> newUser;
+	while (true){
+		std::cout << "Please enter the username you would like to register: ";
+		std::cin >> newUser;
 
-	if (checkUser(newUser)){
-		
+		if (checkUser(newUser)){
+			break;
+		}
+		else addPass(newUser);
 	}
 
 }
 
 bool getUser(const std::string &userIn)
 {
-		std::string userFile = "userinfo/"+userIn+".txt";
+		std::string userFile = "userinfo/"+userIn;
 		std::ifstream authFile{userFile};
 		std::string fUser;
 
@@ -74,7 +106,7 @@ bool getPass(const std::string &userIn)
 	int logAttempts;
 	logAttempts = 2;
 	
-	std::string userFile = "userinfo/"+userIn+".txt";
+	std::string userFile = "userinfo/"+userIn;
 	std::ifstream authFile{userFile};
 	std::string fUser,fPass;
 
@@ -131,12 +163,8 @@ void login()
 		if (getUser(userIn)){
 			break;
 		}
-		else{
-			getUser(userIn);
-		}
-		
-	}
-	
+		else getUser(userIn);		
+	}	
 	getPass(userIn);
 }	
 
