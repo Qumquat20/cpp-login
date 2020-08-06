@@ -16,21 +16,21 @@ void login();
 void prompt();
 bool getUser();
 bool getPass();
-
+void menu();
 
 bool checkUser(const std::string &user){
     boost::filesystem::path p("userinfo/"+user);
     if (boost::filesystem::exists(p)){
-        std::cout << "User exists\n Please enter a different username.";
-		return true;
+        std::cout << RED << "User exists.\n" << RESET;
+		return false;
     }
     else{
-		std::cout << "Username available.";
-        return false;
+		std::cout << GREEN << "Username available.\n\n" << RESET;
+        return true;
     }
 }
 
-void addPass(const std::string &user){
+bool addPass(const std::string &user){
 	std::string newPass1;
 	std::string newPass2;
 	
@@ -50,12 +50,13 @@ void addPass(const std::string &user){
 				userFile.close();
 			}
 			else std::cout << "Unable to create user.";
+			return true;
 		}
 		else{
-			
+			std::cout << "Passwords do not match.";
+			return false;
 		}
 	}
-
 }
 
 void reg(){
@@ -63,15 +64,15 @@ void reg(){
 	boost::filesystem::path infoDir("userinfo");
 
 	while (true){
-		std::cout << "Please enter the username you would like to register: ";
+		std::cout << "\nPlease enter the username you would like to register: ";
 		std::cin >> newUser;
 
 		if (checkUser(newUser)){
+			addPass(newUser);
 			break;
 		}
-		else addPass(newUser);
 	}
-
+	menu();
 }
 
 bool getUser(const std::string &userIn)
@@ -171,6 +172,7 @@ void login()
 
 void prompt()
 {
+	std::cout << "\n-----------------------------------------------";
 	std::cout << BLUE << '\n' << R"( __          __  _                          
  \ \        / / | |                         
   \ \  /\  / /__| | ___ ___  _ __ ___   ___ 
@@ -203,7 +205,8 @@ void prompt()
 void menu()
 {
 	int choice;
-	std::cout << "Welcome!\n\n";
+	std::cout << "-----------------------------------------------";
+	std::cout << "\n\nWelcome!\n\n";
 	std::cout << "[1] To login with an existing user.\n";
 	std::cout << "[2] To register a new user.\n";
 	std::cout << "[3] To exit.\n";
@@ -216,7 +219,7 @@ void menu()
 			login();
 			break;
 		case 2:
-//			register();
+			reg();
 			break;
 		case 3:
 			std::cout << "Goodbye!";
