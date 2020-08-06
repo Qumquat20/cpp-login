@@ -13,11 +13,12 @@
 #define BLUE      "\033[34m"
 
 void login();
-void prompt();
+void panel();
 bool getUser();
 bool getPass();
 void menu();
 
+// Checks if user exists by checking for the users file in the userinfo directory, if so then returns false, if user doesn't exist the returns true 
 bool checkUser(const std::string &user){
     boost::filesystem::path p("userinfo/"+user);
     if (boost::filesystem::exists(p)){
@@ -30,17 +31,16 @@ bool checkUser(const std::string &user){
     }
 }
 
+// Prompts user for password when registering new user using getpass() to mask input. If passwords do not match, returns false. If passwords match then userfile is created with the username and password seperated by a colon.
 bool addPass(const std::string &user){
 	std::string newPass1;
 	std::string newPass2;
 	
 	while (true){
 
-		std::cout << "Enter your password: ";
-		std::cin >> newPass1;
+		newPass1 = getpass("Enter your password: ");
 
-		std::cout << "Re-enter your password: ";
-		std::cin >> newPass2;
+		newPass2 = getpass("Re-enter your password: ");
 
 		if (newPass1 == newPass2){
 			std::ofstream userFile ("userinfo/"+user);
@@ -48,20 +48,21 @@ bool addPass(const std::string &user){
 			if (userFile.is_open()){
 				userFile << user+":"+newPass2;
 				userFile.close();
+				std::cout << GREEN << "User registered!" << RESET;
 			}
-			else std::cout << "Unable to create user.";
+			else std::cerr << RED << "Unable to create user." << RESET;
 			return true;
 		}
 		else{
-			std::cout << "Passwords do not match.";
+			std::cout << RED << "Passwords do not match." << RESET;
 			return false;
 		}
 	}
 }
 
+// Prompts user to enter username they wish to register then passes it to checkUser() and addPass() to register. If user is added, breaks loop and calls menu().
 void reg(){
 	std::string newUser;
-	boost::filesystem::path infoDir("userinfo");
 
 	while (true){
 		std::cout << "\nPlease enter the username you would like to register: ";
@@ -75,6 +76,7 @@ void reg(){
 	menu();
 }
 
+// Checks if given user exists, if so returns true, if not returns false. If unable to open userfile, sends error message to std error 
 bool getUser(const std::string &userIn)
 {
 		std::string userFile = "userinfo/"+userIn;
@@ -99,7 +101,7 @@ bool getUser(const std::string &userIn)
 		}	
 }
 
-
+// Prompts user for password then checks supplied password against correct password taken from userfile of user trying to authenticate.
 bool getPass(const std::string &userIn)
 {
 	std::string passIn;
@@ -120,13 +122,12 @@ bool getPass(const std::string &userIn)
 		std::getline(authFile, fPass); //Use EOL as delimiter
 		
 		while (logAttempts >= 0){
-			std::cout << "Enter your password: ";
-			std::cin >> passIn;
+			passIn = getpass("Enter your password: ");
 
 			if (fPass == passIn){
 				std::cout << GREEN << "Password correct!\n" << RESET;
 				return true;
-				prompt();
+				panel();
 			}
 			else{
 				switch(logAttempts){
@@ -150,9 +151,7 @@ bool getPass(const std::string &userIn)
 	}
 }
 
-
-
-
+// Prompts user for username they would like to authenticate with then supplies it to getUser() which, if it returns true breaks the loop and proceeds to pass the verified username to getPass() for authentication.
 void login()
 {
 	std::string userIn, passIn;
@@ -169,8 +168,8 @@ void login()
 	getPass(userIn);
 }	
 
-
-void prompt()
+// Administration panel/prompt given to the user once they are authenticated, supply the number corresponding to the command.
+void panel()
 {
 	std::cout << "\n-----------------------------------------------";
 	std::cout << BLUE << '\n' << R"( __          __  _                          
@@ -181,7 +180,8 @@ void prompt()
      \/  \/ \___|_|\___\___/|_| |_| |_|\___|)" << RESET <<"\n\n";
 
 	std::cout << "Options:" << std::endl << "  [1]  View Changelog\n";
-	std::cout << "  [2]  Exit\n\n";
+	std::cout << "  [2]  Add user" << std::endl;
+	std::cout << "  [3]  Exit\n\n";
 
 	int cmd;
 	
@@ -194,6 +194,9 @@ void prompt()
 				clog();
 				break;
 			case 2:
+				addUser();
+				break;
+			case 3:
 				std::cout << "Goodbye! Exiting...";
 				exit(EXIT_SUCCESS);
 				break;
@@ -202,6 +205,7 @@ void prompt()
 	}
 }
 
+// The 'main menu' of the program which shows at startup and when a new user has been registered, supply the number corresponding to the desired action.
 void menu()
 {
 	int choice;
@@ -229,9 +233,8 @@ void menu()
 }
 
 
-
 int main()
 {	
 	menu();
-	prompt();
+	panel();
 }
