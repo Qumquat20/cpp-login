@@ -181,7 +181,8 @@ void panel()
 
 	std::cout << "Options:" << std::endl << "  [1]  View Changelog\n";
 	std::cout << "  [2]  Add user" << std::endl;
-	std::cout << "  [3]  Exit\n\n";
+	std::cout << "  [3]  Delete user\n" << std::endl;
+	std::cout << "  [4]  Exit\n\n";	
 
 	int cmd;
 	
@@ -197,6 +198,9 @@ void panel()
 				addUser();
 				break;
 			case 3:
+				delUser();
+				break;
+			case 4:
 				std::cout << "Goodbye! Exiting...";
 				exit(EXIT_SUCCESS);
 				break;

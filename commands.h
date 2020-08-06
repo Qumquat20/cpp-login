@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include <cstdio>
 
 
 void clog()
@@ -58,5 +59,22 @@ void addUser()
 	}
 }
 
+void delUser()
+{
+	std::string user;
+
+	std::cout << "\nEnter the user you would like to delete: ";
+	std::cin >> user;
+
+	boost::filesystem::path p("userinfo/"+user);
+	if (boost::filesystem::exists(p)){
+		boost::filesystem::remove(p);
+		std::cout << GREEN << "User deleted succesfully.\n\n" << RESET;
+	}
+	else if(!boost::filesystem::exists(p)) std::cerr << "User does not exist.\n\n";
+	else{
+		std::cerr << "User could not be deleted.\n\n";
+	}		
+}
 
 #endif
