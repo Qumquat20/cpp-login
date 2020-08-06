@@ -1,4 +1,5 @@
 test*
+userinfo/*
 
 # Prerequisites
 *.d
