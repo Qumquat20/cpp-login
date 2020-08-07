@@ -48,7 +48,7 @@ bool addPass(const std::string &user){
 			if (userFile.is_open()){
 				userFile << user+":"+newPass2;
 				userFile.close();
-				std::cout << GREEN << "User registered!" << RESET;
+				std::cout << GREEN << "User registered!\n\n" << RESET;
 			}
 			else std::cerr << RED << "Unable to create user." << RESET;
 			return true;
