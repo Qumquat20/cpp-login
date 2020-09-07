@@ -77,4 +77,11 @@ void delUser()
 	}		
 }
 
+void listUsers()
+{
+	std::cout << '\n';
+	system("ls -1 userinfo/");
+	std::cout << '\n';
+}
+
 #endif

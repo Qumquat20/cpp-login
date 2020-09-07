@@ -79,26 +79,27 @@ void reg(){
 // Checks if given user exists, if so returns true, if not returns false. If unable to open userfile, sends error message to std error 
 bool getUser(const std::string &userIn)
 {
-		std::string userFile = "userinfo/"+userIn;
-		std::ifstream authFile{userFile};
-		std::string fUser;
+	std::string userFile = "userinfo/"+userIn;
+	std::ifstream authFile{userFile};
+	std::string fUser;
 
-		if (!authFile){
-			std::cerr << "Error, "; 
-			std::cerr << userFile <<  "could not be opened for reading.\n";
+	if (!authFile){
+		std::cerr << "Error, "; 
+		std::cerr << userFile <<  "could not be opened for reading.\n";
+	}
+
+	while (authFile){
+		std::getline(authFile, fUser, ':' ); //Use ':' as a delimiter
+		if (fUser == userIn){
+			std::cout << GREEN << "Valid username.\n" << RESET << std::endl;
+			return true;
 		}
-
-		while (authFile){
-			std::getline(authFile, fUser, ':' ); //Use ':' as a delimiter
-			if (fUser == userIn){
-				std::cout << GREEN << "Valid username.\n" << RESET << std::endl;
-				return true;
-			}
-			else{
-				std::cout << RED << "\nInavlid username. Please try again.\n" << RESET << std::endl;
-				return false;
-			}
-		}	
+		else{
+			std::cout << RED << "\nInavlid username. Please try again.\n" << RESET << std::endl;
+			return false;
+		}
+	}
+	return 0;
 }
 
 // Prompts user for password then checks supplied password against correct password taken from userfile of user trying to authenticate.
@@ -149,6 +150,7 @@ bool getPass(const std::string &userIn)
 			}
 		}
 	}
+	return 0;
 }
 
 // Prompts user for username they would like to authenticate with then supplies it to getUser() which, if it returns true breaks the loop and proceeds to pass the verified username to getPass() for authentication.
@@ -181,8 +183,9 @@ void panel()
 
 	std::cout << "Options:" << std::endl << "  [1]  View Changelog\n";
 	std::cout << "  [2]  Add user" << std::endl;
-	std::cout << "  [3]  Delete user\n" << std::endl;
-	std::cout << "  [4]  Exit\n\n";	
+	std::cout << "  [3]  Delete user" << std::endl;
+	std::cout << "  [4]  List users" << std::endl;
+	std::cout << "  [5]  Exit\n\n";	
 
 	int cmd;
 	
@@ -201,6 +204,9 @@ void panel()
 				delUser();
 				break;
 			case 4:
+				listUsers();
+				break;
+			case 5:
 				std::cout << "Goodbye! Exiting...";
 				exit(EXIT_SUCCESS);
 				break;
@@ -241,4 +247,6 @@ int main()
 {	
 	menu();
 	panel();
+
+	return 0;
 }
